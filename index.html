@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Neto. Préstamo personal en pesos, en cuotas. Esta web no otorga préstamos.">
+<title>Neto</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body {
+    margin: 0;
+    background: #fff;
+    color: #111;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  body.menu-open { overflow: hidden; }
+  body.has-bar { padding-bottom: 76px; }
+  img { max-width: 100%; }
+  button, input { font: inherit; color: inherit; letter-spacing: 0; }
+  a { color: inherit; }
+  h1, h2, h3, p { letter-spacing: 0; }
+  h1 {
+    margin: 0;
+    font-size: clamp(36px, 4.6vw, 56px);
+    line-height: 1.05;
+    font-weight: 600;
+  }
+  h2 {
+    margin: 0;
+    font-size: clamp(28px, 3vw, 38px);
+    line-height: 1.15;
+    font-weight: 600;
+  }
+  h3 { margin: 0; font-size: 19px; line-height: 1.3; font-weight: 600; }
+  p { margin: 0; }
+  .wrap { width: min(1200px, calc(100% - 48px)); margin-inline: auto; }
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 16px;
+    color: #444;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .band-dark .eyebrow { color: #d8d8d8; }
+  .eyebrow i { width: 18px; height: 1px; background: currentColor; display: block; flex: none; }
+  .lead { margin-top: 16px; color: #444; max-width: 40em; }
+  .band-dark .lead, .band-dark .muted { color: #d8d8d8; }
+  .muted { color: #666; }
+  .skip {
+    position: absolute;
+    left: 16px;
+    top: -48px;
+    background: #fff;
+    color: #111;
+    padding: 10px 14px;
+    z-index: 80;
+  }
+  .skip:focus { top: 12px; }
+  .vh {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  :focus { outline: none; }
+  :focus-visible { outline: 2px solid #111; outline-offset: 3px; }
+  .band-dark :focus-visible, .site-footer :focus-visible, .dlbar :focus-visible { outline-color: #fff; }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: #fff;
+    border-bottom: 1px solid #d8d8d8;
+  }
+  .bar {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; min-height: 44px; }
+  .mark {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: #111; color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 20px; letter-spacing: 0; flex: none;
+  }
+  .word { font-weight: 600; font-size: 18px; letter-spacing: 0; }
+  .nav { display: flex; gap: 18px; margin-left: 20px; }
+  .nav a {
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .nav a[aria-current="page"] { box-shadow: inset 0 -2px 0 #111; }
+  .tools { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .lang { display: flex; }
+  .lang button, .menu-btn, .chip, .acc-btn, .btn {
+    letter-spacing: 0;
+    cursor: pointer;
+  }
+  .lang button, .menu-btn {
+    min-width: 44px;
+    min-height: 44px;
+    border: 1px solid #d8d8d8;
+    background: #fff;
+    color: #111;
+  }
+  .lang button[aria-pressed="true"] { background: #111; color: #fff; border-color: #111; }
+  .menu-btn { display: none; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 18px;
+    background: #111;
+    color: #fff;
+    text-decoration: none;
+    border: 1px solid #111;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .btn.ghost { background: transparent; color: #111; }
+  .btn.light { background: #fff; color: #111; border-color: #fff; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+
+  .hero { padding: 56px 0 28px; }
+  .hero-grid, .split, .legal-grid, .foot-grid, .cols-3, .steps, .facts {
+    display: grid;
+    gap: 32px;
+  }
+  .hero-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); align-items: end; gap: 48px; }
+  .panel { background: #f4f4f4; padding: 28px 28px 12px; }
+  .meter-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px solid #d8d8d8;
+  }
+  .meter-row span { color: #444; font-size: 16px; }
+  .meter-row strong { font-size: 28px; font-weight: 600; letter-spacing: 0; text-align: right; }
+  .meter-row.is-cost { align-items: center; padding: 20px 0 24px; }
+  .meter-row.is-cost strong { font-size: 48px; line-height: 1; }
+
+  .facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid #d8d8d8;
+    border-bottom: 1px solid #d8d8d8;
+    margin: 28px auto 0;
+  }
+  .facts article { padding: 28px 22px 28px 0; }
+  .facts article + article { box-shadow: inset 1px 0 0 #d8d8d8; padding-left: 22px; }
+  .facts p { color: #444; font-size: 16px; margin-bottom: 8px; }
+  .facts strong { display: block; font-size: 19px; font-weight: 600; letter-spacing: 0; }
+  .facts em { display: block; margin-top: 6px; font-style: normal; color: #666; font-size: 15px; }
+
+  .block { padding: 88px 0; }
+  .band { background: #f4f4f4; }
+  .band-dark { background: #111; color: #fff; }
+  .split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px 64px; align-items: start; }
+  .sticky { position: sticky; top: 96px; }
+  .kv { margin: 0; }
+  .kv div, .ol li {
+    border-top: 1px solid #d8d8d8;
+  }
+  .kv div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    padding: 14px 0;
+  }
+  .kv dt { margin: 0; color: #444; }
+  .band .kv dt { color: #444; }
+  .kv dd { margin: 0; font-weight: 600; text-align: right; letter-spacing: 0; }
+  .kv .emph dd { font-size: 28px; }
+  .ol { list-style: none; margin: 0; padding: 0; }
+  .ol li {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
+    padding: 18px 0;
+  }
+  .ol .n { font-weight: 600; }
+  .rule-top { border-top: 1px solid #d8d8d8; margin-top: 28px; padding-top: 22px; }
+  .cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 36px; gap: 28px; }
+  .cols-3 h3 { margin-bottom: 8px; }
+  .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+  .steps article { border-top: 2px solid #111; padding-top: 16px; }
+  .steps p { margin-top: 8px; color: #444; }
+  .link { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .post-row {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: baseline;
+    padding: 22px 0;
+    border-top: 1px solid #d8d8d8;
+    text-decoration: none;
+  }
+  .post-row:hover h3 { text-decoration: underline; text-underline-offset: 3px; }
+  .prose { max-width: 68ch; }
+  .prose p, .prose li { margin-top: 14px; }
+  .prose ul { margin: 0; padding-left: 1.1em; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 8px; }
+  .chip {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid #d8d8d8;
+    background: #fff;
+    color: #111;
+    font-size: 16px;
+  }
+  .chip[aria-pressed="true"] { background: #111; color: #fff; border-color: #111; }
+  .acc-btn {
+    width: 100%;
+    min-height: 44px;
+    text-align: left;
+    background: none;
+    border: 0;
+    border-top: 1px solid #d8d8d8;
+    padding: 16px 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 19px;
+    font-weight: 600;
+  }
+  .acc-panel { display: none; color: #444; padding: 0 0 16px; }
+  .acc-panel.open { display: block; }
+  .tag { color: #666; font-size: 14px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  caption { text-align: left; font-weight: 600; padding-bottom: 8px; }
+  th, td { text-align: left; padding: 12px 8px; border-top: 1px solid #d8d8d8; vertical-align: top; letter-spacing: 0; }
+  th { font-size: 14px; color: #444; font-weight: 600; }
+  td.num, th.num { text-align: right; }
+  .legal-grid { grid-template-columns: 240px minmax(0, 1fr); gap: 40px; align-items: start; }
+  .side a { display: flex; align-items: center; min-height: 44px; text-decoration: none; border-top: 1px solid #d8d8d8; }
+  .side a[aria-current="page"] { font-weight: 700; }
+
+  .site-footer { background: #111; color: #fff; padding: 64px 0 28px; }
+  .site-footer a { color: #fff; }
+  .site-footer .mark { background: #fff; color: #111; }
+  .site-footer .muted, .site-footer .fine { color: #d8d8d8; }
+  .foot-grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; }
+  .site-footer h2 { font-size: 16px; margin-bottom: 10px; }
+  .site-footer ul { list-style: none; margin: 0; padding: 0; }
+  .site-footer li a, .site-footer .stack a { display: inline-flex; align-items: center; min-height: 44px; }
+  .fine { font-size: 14px; border-top: 1px solid #d8d8d8; margin-top: 28px; padding-top: 16px; }
+  .dlbar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 50;
+    background: #111;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px 16px;
+  }
+  .dlbar p { flex: 1; font-size: 15px; }
+  .dlbar .btn { background: #fff; color: #111; border-color: #fff; }
+  .x {
+    min-width: 44px; min-height: 44px;
+    background: transparent; color: #fff;
+    border: 1px solid #d8d8d8;
+  }
+
+  @media (max-width: 980px) {
+    .nav {
+      display: none;
+      position: absolute;
+      left: 0; right: 0; top: 100%;
+      margin: 0;
+      background: #fff;
+      border-bottom: 1px solid #d8d8d8;
+      flex-direction: column;
+      padding: 8px 16px 16px;
+      gap: 0;
+    }
+    .nav.open { display: flex; }
+    .menu-btn { display: inline-flex; align-items: center; justify-content: center; }
+    .hdr-dl { display: none; }
+    .hero-grid, .split, .legal-grid, .foot-grid, .cols-3, .steps, .facts {
+      grid-template-columns: 1fr;
+    }
+    .facts article, .facts article + article { box-shadow: none; padding: 20px 0; border-top: 1px solid #d8d8d8; }
+    .facts article:first-child { border-top: 0; }
+    .sticky { position: static; }
+    .post-row { grid-template-columns: 1fr; gap: 6px; }
+  }
+  @media (max-width: 800px) {
+    table.sched thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    table.sched, table.sched tbody, table.sched tr, table.sched td { display: block; width: 100%; }
+    table.sched tr { border-top: 1px solid #d8d8d8; padding: 10px 0 14px; }
+    table.sched td {
+      border: 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: right;
+      padding: 4px 0;
+    }
+    table.sched td::before { content: attr(data-label); color: #444; font-weight: 600; text-align: left; }
+  }
+  @media (max-width: 720px) {
+    .wrap { width: min(1200px, calc(100% - 32px)); }
+    .block { padding: 56px 0; }
+    .hero { padding-top: 36px; }
+    .panel { padding: 8px 18px 4px; }
+    .meter-row, .meter-row.is-cost { flex-direction: column; align-items: flex-start; }
+    .meter-row strong, .meter-row.is-cost strong { text-align: left; font-size: 32px; }
+    .meter-row.is-cost strong { font-size: 44px; }
+    .kv div { grid-template-columns: 1fr; gap: 4px; }
+    .kv dd { text-align: left; }
+    body { font-size: 16px; }
+  }
+  @media (max-width: 420px) {
+    .bar { height: auto; min-height: 72px; flex-wrap: wrap; padding: 8px 0; }
+    .tools { margin-left: auto; }
+  }
+  @media (min-width: 981px) {
+    .dlbar { display: none !important; }
+    body.has-bar { padding-bottom: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" id="skip" href="#main">Saltar al contenido</a>
+<header class="site-header" id="header"></header>
+<div id="bar"></div>
+<main id="main" tabindex="-1"></main>
+<footer class="site-footer" id="footer"></footer>
+<script>
+const SCHEDULE = [
+  ["1", "02/12/2026", "24.645,14", "24.000,00", "5.040,00", "48.645,14", "53.685,14"],
+  ["2", "02/01/2027", "27.602,56", "21.042,58", "4.418,94", "48.645,14", "53.064,08"],
+  ["3", "02/02/2027", "30.914,86", "17.730,28", "3.723,36", "48.645,14", "52.368,50"],
+  ["4", "02/03/2027", "34.624,65", "14.020,49", "2.944,30", "48.645,14", "51.589,44"],
+  ["5", "02/04/2027", "38.779,61", "9.865,53", "2.071,76", "48.645,14", "50.716,90"],
+  ["6", "02/05/2027", "43.433,18", "5.211,98", "1.094,52", "48.645,16", "49.739,68"]
+];
+const PAGES = ["inicio", "costos", "seguridad", "ayuda", "guias", "legal"];
+const state = {
+  lang: localStorage.getItem("neto-lang") === "en" ? "en" : "es",
+  page: "inicio",
+  slug: "",
+  faq: "all",
+  post: "all",
+  open: "",
+  menu: false,
+  bar: sessionStorage.getItem("neto-bar") !== "off",
+  anchor: ""
+};
+
+const UI = {
+  es: {
+    skip: "Saltar al contenido",
+    menu: "Menú",
+    close: "Cerrar",
+    lang: "Idioma",
+    download: "Descargá la app",
+    look: "Mirá el costo",
+    back: "Volver a guías",
+    read: "Leer →",
+    draft: "Borrador",
+    navHome: "Inicio",
+    navCost: "Costos",
+    navSafe: "Seguridad",
+    navHelp: "Ayuda",
+    navGuides: "Guías",
+    heroEye: "Préstamo personal",
+    h1: "Mirá lo que llega, lo que devolvés y el día.",
+    heroLead: "Un préstamo personal en pesos, en cuotas. Antes de aceptar ves el neto, el total y la fecha de débito. Esta web no presta: leés el producto y bajás la app oficial.",
+    exEye: "Ejemplo · 02/11/2026",
+    mArrive: "Llega a tu cuenta",
+    mCuota: "Cuota francesa · 6",
+    mTotal: "Total a devolver",
+    mDate: "Primera cuota",
+    mCft: "CFTEA con IVA",
+    pesos: "pesos",
+    factEye: "El producto",
+    f1k: "Plazo", f1v: "3 a 12 cuotas mensuales", f1s: "El tramo supera los 60 días",
+    f2k: "Sistema", f2v: "Francés", f2s: "Capital e interés en cuota fija",
+    f3k: "Acreditación", f3v: "Tu CBU o CVU", f3s: "Solo a tu nombre",
+    f4k: "Requisitos", f4v: "18 años y DNI vigente", f4s: "El monto lo define la evaluación",
+    costEye: "Costos",
+    costH: "Un ejemplo en pesos, completo.",
+    costLead: "Así se leen, juntos, el neto, la cuota, el impuesto y el total de una misma operación.",
+    fullTable: "Ver las seis cuotas",
+    trustEye: "Quién presta",
+    trustH: "Verificá la razón social, no un escudo.",
+    trustLead: "Neto Consumo S.A. se presenta como proveedor no financiero de crédito. No es un banco y no toma depósitos.",
+    t1: "Razón social: Neto Consumo S.A.",
+    t2: "CUIT 30-71845291-7. Buscalo, junto con la razón social, en el régimen de transparencia del BCRA.",
+    t3: "Compará precios y condiciones en la página de préstamos personales del BCRA. Un aviso de esta web no es una recomendación oficial.",
+    t4: "Si un reclamo no se resuelve, el paso siguiente es el canal de reclamos del BCRA. Guardá el número que te demos.",
+    benEye: "Antes de aceptar",
+    benH: "Tres números, antes de aceptar.",
+    b1t: "Neto", b1d: "Ves cuánto llega a tu cuenta, no solo la cuota del mes.",
+    b2t: "Cuota fija", b2d: "Capital e interés van en cuota francesa. El IVA del interés se muestra aparte.",
+    b3t: "Fecha", b3d: "Elegís el día de débito antes de aceptar. Después no cambia.",
+    b4: "El CFTEA con IVA se lee más grande que la TNA y la TEA.",
+    stepEye: "Cómo pedir",
+    stepH: "Cuatro pasos, en la app.",
+    s1t: "01 · Identidad", s1d: "Celular, DNI de los dos lados y prueba de vida. No hace falta la agenda.",
+    s2t: "02 · Oferta", s2d: "Monto, cuota, total, TNA, TEA, CFTEA y la fecha de la primera cuota.",
+    s3t: "03 · Cuenta", s3d: "El dinero entra a un CBU o CVU a tu nombre.",
+    s4t: "04 · Pago", s4d: "Débito, transferencia o red de efectivo. El resumen nombra el canal.",
+    frEye: "Seguridad",
+    frH: "No te vamos a pedir la clave.",
+    frLead: "Tampoco la lista de contactos, ni un pago por adelantado para “liberar” el préstamo.",
+    w1t: "Clave y código", w1d: "Ningún canal de Neto pide la clave de la app ni el OTP.",
+    w2t: "Agenda", w2d: "No leemos contactos, mensajes, galería ni ubicación precisa, y no escribimos a tus contactos.",
+    w3t: "Plazo corto", w3d: "Este producto no se devuelve entero dentro de los 60 días.",
+    moreSafe: "Leer cómo cuidarte",
+    helpEye: "Ayuda",
+    helpH: "Tres preguntas que aparecen siempre.",
+    q1: "¿Esta web me presta?", a1: "No. El pedido se hace en la app oficial.",
+    q2: "¿Los $ 200.000,00 son mi oferta?", a2: "No. Son un ejemplo para leer un costo completo.",
+    q3: "¿Me puedo arrepentir?", a3: "Sí. Tenés 10 días hábiles y un botón de arrepentimiento en la app.",
+    allHelp: "Ir a ayuda y reclamos",
+    postEye: "Guías",
+    postH: "Para leer antes de decidir.",
+    postLead: "Borradores de educación financiera. No son noticias de la empresa.",
+    allPosts: "Ver las cuatro guías",
+    dlEye: "App oficial",
+    dlH: "Descargá la app oficial.",
+    dlLead: "El desarrollador publicado es Neto Consumo S.A. Un ícono parecido no alcanza.",
+    footAbout: "Préstamo personal en pesos. La web explica el producto y no lo otorga.",
+    footContact: "Contacto",
+    footLegal: "Legal",
+    footReg: "Regulatorio",
+    addr: "Av. Corrientes 1840, piso 6, C1045AAN, Ciudad Autónoma de Buenos Aires",
+    src: "La TNA de 144,00% es el promedio ponderado de préstamos personales de OPNFC a febrero de 2026, publicado por el BCRA en junio de 2026. La TEA, el CFTEA y las cuotas se calculan a partir de esa tasa, con IVA del 21% sobre intereses, sin sellos ni ingresos brutos. La razón social, el CUIT, el domicilio, el teléfono, el correo y los enlaces de tienda son valores de ejemplo.",
+    copy: "© 2026 Neto Consumo S.A.",
+    fraudLine: "Desconfiá de quien exija devolver el total en 60 días o menos, o de quien pida la clave por chat.",
+    titleHome: "Neto — Préstamo personal",
+    titleCost: "Neto — Costos",
+    titleSafe: "Neto — Seguridad",
+    titleHelp: "Neto — Ayuda",
+    titleGuides: "Neto — Guías",
+    titleLegal: "Neto — Legal",
+    costPageH: "El ejemplo, cuota por cuota.",
+    costPageL: "Capital de $ 200.000,00 pesos, 6 cuotas, desembolso de ejemplo el 2 de noviembre de 2026. No es una oferta ni un máximo para todo el país.",
+    schCap: "Seis cuotas del ejemplo",
+    thN: "Cuota", thDate: "Vencimiento", thPrin: "Capital", thInt: "Interés", thIva: "IVA", thFr: "Cuota francesa", thDeb: "Débito con IVA",
+    calcH: "Cómo se llegó a estos números",
+    c1: "La TNA de referencia es 144,00% mensualizada en 12,00%. Es el promedio ponderado de préstamos personales de OPNFC a febrero de 2026.",
+    c2: "La TEA es (1 + 0,12)^12 − 1 = 289,60%.",
+    c3: "La cuota francesa de capital e interés es $ 48.645,14. La sexta cierra en $ 48.645,16 para que el saldo quede en cero. La diferencia es $ 0,02.",
+    c4: "El IVA de este ejemplo es el 21% del interés de cada cuota. Suma $ 19.292,88. El débito mensual cambia porque el interés baja.",
+    c5: "El CFTEA de 408,83% es la tasa efectiva anual del flujo: salen $ 200.000,00 y entran los seis débitos con IVA. No incluye impuesto de sellos, ingresos brutos ni seguros.",
+    c6: "$ 200.000,00 equivalen a unos 15 días del salario mínimo de octubre de 2026, que es $ 391.200. Es un ancla de lectura, no un consejo de crédito.",
+    dateH: "Revocación y cancelación anticipada",
+    d1: "Botón de arrepentimiento: 10 días hábiles desde el contrato o desde que el producto queda disponible, lo que ocurra después. En el ejemplo, contando desde el 02/11/2026 y sin feriados, el plazo llega al 13/11/2026.",
+    d2: "Cancelación anticipada: deja de corresponder comisión cuando ya pasó un cuarto del plazo original o 180 días desde el desembolso, el plazo más largo. En este ejemplo ese día es el 01/05/2027. No publicamos un porcentaje de comisión para la etapa anterior.",
+    d3: "El día de débito del ejemplo es el 2 de cada mes. En un préstamo real se elige antes de aceptar y queda fijo.",
+    safeH: "Cinco fraudes que ya circulan.",
+    safeL: "Si el mensaje pide apuro, clave o un pago previo, no es Neto.",
+    scH: "Situaciones",
+    nvH: "Qué no hacemos",
+    chH: "Canales oficiales",
+    nowH: "Si ya caíste",
+    upH: "Reclamo y BCRA",
+    helpH: "Pedido, pago y reclamo.",
+    helpL: "Las respuestas usan las mismas cifras que Costos.",
+    faqAll: "Todas",
+    contactH: "Escribirnos",
+    contactL: "Pedí siempre un número de reclamo. El WhatsApp no pide clave ni OTP.",
+    guideH: "Guías en borrador.",
+    guideL: "Cuatro textos para leer el costo, el fraude, el aguinaldo y la revocación.",
+    legalEye: "Legal",
+    work: "Texto de trabajo para esta interacción. No reemplaza el contrato ni una opinión legal firmada.",
+    bar: "App oficial de Neto"
+  },
+  en: {
+    skip: "Skip to content",
+    menu: "Menu",
+    close: "Close",
+    lang: "Language",
+    download: "Download the app",
+    look: "See the cost",
+    back: "Back to guides",
+    read: "Read →",
+    draft: "Draft",
+    navHome: "Home",
+    navCost: "Costs",
+    navSafe: "Security",
+    navHelp: "Help",
+    navGuides: "Guides",
+    heroEye: "Personal loan",
+    h1: "See what arrives, what you repay, and the date.",
+    heroLead: "A peso personal loan, repaid in installments. Before you accept, you see the net amount, the total, and the debit date. This website does not lend. You read the product here and download the official app.",
+    exEye: "Example · 02/11/2026",
+    mArrive: "Arrives in your account",
+    mCuota: "French installment · 6",
+    mTotal: "Total to repay",
+    mDate: "First installment",
+    mCft: "CFTEA with VAT",
+    pesos: "pesos",
+    factEye: "The product",
+    f1k: "Term", f1v: "3 to 12 monthly installments", f1s: "The span is longer than 60 days",
+    f2k: "Schedule", f2v: "French amortization", f2s: "Principal and interest in a fixed installment",
+    f3k: "Disbursement", f3v: "Your CBU or CVU", f3s: "Only an account in your name",
+    f4k: "Requirements", f4v: "Age 18 and a valid DNI", f4s: "The amount comes from the assessment",
+    costEye: "Costs",
+    costH: "One complete example, in pesos.",
+    costLead: "Net amount, installment, tax, and total belong to the same operation.",
+    fullTable: "See all six installments",
+    trustEye: "Who lends",
+    trustH: "Check the legal name, not a crest.",
+    trustLead: "Neto Consumo S.A. presents itself as a non-financial credit provider. It is not a bank and it does not take deposits.",
+    t1: "Legal name: Neto Consumo S.A.",
+    t2: "CUIT 30-71845291-7. Look up that name and CUIT in the BCRA transparency regime.",
+    t3: "Compare prices and conditions on the BCRA personal-loan page. A notice on this website is not an official recommendation.",
+    t4: "If a complaint is not resolved, the next step is the BCRA complaint channel. Keep the number we give you.",
+    benEye: "Before you accept",
+    benH: "Three numbers, before you accept.",
+    b1t: "Net amount", b1d: "You see what arrives in your account, not only this month’s installment.",
+    b2t: "Fixed installment", b2d: "Principal and interest follow a French schedule. VAT on interest is shown separately.",
+    b3t: "Date", b3d: "You choose the debit date before you accept. It does not change afterwards.",
+    b4: "The CFTEA with VAT is set larger than the TNA and the TEA.",
+    stepEye: "How to apply",
+    stepH: "Four steps, in the app.",
+    s1t: "01 · Identity", s1d: "Phone, both sides of the DNI, and a liveness check. Your contact list is not required.",
+    s2t: "02 · Offer", s2d: "Amount, installment, total, TNA, TEA, CFTEA, and the first due date.",
+    s3t: "03 · Account", s3d: "The money goes to a CBU or CVU in your name.",
+    s4t: "04 · Repayment", s4d: "Account debit, transfer, or a cash network. The summary names the channel.",
+    frEye: "Security",
+    frH: "We will not ask for your password.",
+    frLead: "We also will not ask for your contacts, or for an advance payment to “release” the loan.",
+    w1t: "Password and code", w1d: "No Neto channel asks for the app password or the OTP.",
+    w2t: "Contacts", w2d: "We do not read contacts, messages, photos, or precise location, and we do not message your contacts.",
+    w3t: "Short term", w3d: "This product is not repaid in full within 60 days.",
+    moreSafe: "Read how to protect yourself",
+    helpEye: "Help",
+    helpH: "Three questions that always show.",
+    q1: "Does this website lend?", a1: "No. You apply in the official app.",
+    q2: "Is $ 200.000,00 my offer?", a2: "No. It is an example so you can read a full cost.",
+    q3: "Can I withdraw?", a3: "Yes. You have 10 business days and a withdrawal button in the app.",
+    allHelp: "Go to help and complaints",
+    postEye: "Guides",
+    postH: "Read this before you decide.",
+    postLead: "Drafts for financial education. They are not company news.",
+    allPosts: "See all four guides",
+    dlEye: "Official app",
+    dlH: "Download the official app.",
+    dlLead: "The published developer is Neto Consumo S.A. A similar icon is not enough.",
+    footAbout: "A personal loan in pesos. The website explains the product and does not grant it.",
+    footContact: "Contact",
+    footLegal: "Legal",
+    footReg: "Regulatory",
+    addr: "Av. Corrientes 1840, piso 6, C1045AAN, City of Buenos Aires",
+    src: "The 144,00% TNA is the February 2026 weighted average for OPNFC personal loans, published by the BCRA in June 2026. TEA, CFTEA, and the installments on this website are calculated from that rate, with 21% VAT on interest, and without stamp tax or gross-income tax. Amounts keep Argentine formatting: a dot for thousands and a comma for decimals. The legal name, CUIT, address, phone, email, and store links are example values.",
+    copy: "© 2026 Neto Consumo S.A.",
+    fraudLine: "Be wary of anyone who demands full repayment in 60 days or less, or who asks for your password in chat.",
+    titleHome: "Neto — Personal loan",
+    titleCost: "Neto — Costs",
+    titleSafe: "Neto — Security",
+    titleHelp: "Neto — Help",
+    titleGuides: "Neto — Guides",
+    titleLegal: "Neto — Legal",
+    costPageH: "The example, installment by installment.",
+    costPageL: "Principal of $ 200,000.00 pesos written as $ 200.000,00, 6 installments, example disbursement on 2 November 2026. This is not an offer and not a nationwide maximum.",
+    schCap: "Six installments in the example",
+    thN: "No.", thDate: "Due date", thPrin: "Principal", thInt: "Interest", thIva: "VAT", thFr: "French installment", thDeb: "Debit with VAT",
+    calcH: "How these figures were reached",
+    c1: "The reference TNA is 144,00%, converted to a monthly rate of 12,00%. It is the February 2026 weighted average for OPNFC personal loans.",
+    c2: "TEA is (1 + 0.12)^12 − 1 = 289,60%.",
+    c3: "The French principal-and-interest installment is $ 48.645,14. The sixth one closes at $ 48.645,16 so the balance reaches zero. The difference is $ 0,02.",
+    c4: "VAT in this example is 21% of each installment’s interest. It totals $ 19.292,88. The monthly debit changes because interest declines.",
+    c5: "The 408,83% CFTEA is the effective annual rate of the cash flow: $ 200.000,00 goes out, and the six VAT-inclusive debits come back. Stamp tax, gross-income tax, and insurance are not included.",
+    c6: "$ 200.000,00 is about 15 days of the October 2026 minimum wage of $ 391.200. It is a reading anchor, not credit advice.",
+    dateH: "Withdrawal and early payoff",
+    d1: "Withdrawal button: 10 business days from the contract or from the day the product becomes available, whichever is later. In the example, counting from 02/11/2026 and ignoring public holidays, that date is 13/11/2026.",
+    d2: "Early payoff: a cancellation fee should not apply after at least one quarter of the original term, or 180 days from disbursement, whichever is longer. In this example that date is 01/05/2027. We do not publish a fee percentage for the earlier period.",
+    d3: "The example debit day is the 2nd of each month. On a real loan you choose it before accepting, and it stays fixed.",
+    safeH: "Five frauds already going around.",
+    safeL: "If a message pushes you to hurry, share a password, or pay first, it is not Neto.",
+    scH: "Situations",
+    nvH: "What we never do",
+    chH: "Official channels",
+    nowH: "If it already happened",
+    upH: "Complaint and the BCRA",
+    helpH: "Application, repayment, and complaints.",
+    helpL: "The answers use the same figures as Costs.",
+    faqAll: "All",
+    contactH: "Contact us",
+    contactL: "Always ask for a complaint number. WhatsApp does not ask for your password or OTP.",
+    guideH: "Draft guides.",
+    guideL: "Four texts on cost, fraud, the mid-year bonus, and withdrawal.",
+    legalEye: "Legal",
+    work: "Working text for this interaction. It does not replace the contract or a signed legal opinion.",
+    bar: "Official Neto app"
+  }
+};
+
+const FAQ = {
+  es: [
+    ["a1", "apply", "Pedido", "¿Esta web me presta?", "No. El pedido se hace en la app oficial. Acá leés el producto, el ejemplo y los canales de reclamo."],
+    ["a2", "apply", "Pedido", "¿Qué tengo que tener?", "DNI vigente, un celular y un CBU o CVU a tu nombre. La app pide el frente y el dorso del DNI y una prueba de vida. No pide la agenda ni la galería."],
+    ["a3", "apply", "Pedido", "¿Desde qué edad?", "Desde los 18 años, con DNI vigente. Cumplir 21 no es la mayoría de edad."],
+    ["a4", "amount", "Monto", "¿Hay un monto máximo para todo el país?", "No. El monto sale de la evaluación de cada persona. Esta web no publica un techo nacional."],
+    ["a5", "amount", "Monto", "¿Los $ 200.000,00 son mi oferta?", "No. Son un ejemplo para leer un costo completo. Si hay una oferta para vos, aparece en la app antes de aceptar."],
+    ["a6", "disburse", "Acreditación", "¿A dónde llega el dinero?", "Solo a un CBU o CVU a tu nombre."],
+    ["a7", "disburse", "Acreditación", "¿Llega en minutos?", "No prometemos minutos ni una aprobación. La app informa si el dinero se acreditó, si sigue en proceso o si no se acreditó."],
+    ["a8", "repay", "Pago", "¿Cómo pago?", "Débito en cuenta, transferencia o red de efectivo. El resumen del contrato nombra el canal. Una red de efectivo puede tardar en verse en la cuenta."],
+    ["a9", "repay", "Pago", "¿Puedo cancelar antes?", "Después de que pase al menos un cuarto del plazo original, o 180 días desde el desembolso, lo que sea más largo, no corresponde comisión de cancelación anticipada. En el ejemplo de 6 cuotas ese día es el 01/05/2027. Esta web no fija un porcentaje de comisión para la etapa anterior."],
+    ["a10", "repay", "Pago", "¿Me puedo arrepentir?", "Sí. Tenés 10 días hábiles desde que recibís el contrato o desde que el producto queda disponible, el hecho más tardío. En la app el acceso se llama botón de arrepentimiento."],
+    ["a11", "account", "Cuenta", "¿Puedo cambiar el día de débito después?", "No. El día se elige antes de aceptar y queda fijo."],
+    ["a12", "account", "Cuenta", "¿Y si comparto el celular?", "La app permite ocultar el saldo y cerrar la sesión. El aviso de deuda no muestra el monto en la pantalla de bloqueo."],
+    ["a13", "security", "Seguridad", "¿Leen mis contactos para aprobarme?", "No. No pedimos contactos, mensajes, galería, ubicación precisa, registro de llamadas ni lista de aplicaciones."],
+    ["a14", "security", "Seguridad", "¿El WhatsApp pide la clave?", "No. El número de esta web no pide clave, OTP ni un pago por fuera de la app. Si alguien lo hace, cortá el chat y escribinos por correo."],
+    ["a15", "cost", "Costo", "¿Qué es el CFTEA?", "Es el costo financiero total efectivo anual. En el ejemplo incluye interés e IVA, y se muestra más grande que la TNA y la TEA. El 408,83% es el costo de este ejemplo, no un tope firmado de producto."],
+    ["a16", "cost", "Costo", "¿La cuota fija incluye el IVA?", "La cuota francesa fija es capital más interés: $ 48.645,14. El IVA es el 21% del interés de esa cuota y baja cuando baja el interés. Por eso el débito no es idéntico cada mes. La última cuota francesa cierra en $ 48.645,16."],
+    ["a17", "cost", "Costo", "¿El ejemplo incluye sellos?", "No. El impuesto de sellos y, si corresponde, ingresos brutos dependen de la provincia y van en el resumen del contrato. El ejemplo tampoco incluye seguros."],
+    ["a18", "complaint", "Reclamos", "¿Cómo reclamo?", "Primero a Neto, por la app, el correo o el teléfono. Tienen que darte un número de reclamo. Guardá ese número y el del contrato."],
+    ["a19", "complaint", "Reclamos", "¿Y si no me responden?", "Podés seguir el reclamo ante el BCRA. El enlace está en el pie y en esta página."]
+  ],
+  en: [
+    ["a1", "apply", "Apply", "Does this website lend to me?", "No. You apply in the official app. Here you read the product, the example, and the complaint channels."],
+    ["a2", "apply", "Apply", "What do I need?", "A valid DNI, a phone, and a CBU or CVU in your name. The app asks for both sides of the DNI and a liveness check. It does not ask for your contacts or your photo gallery."],
+    ["a3", "apply", "Apply", "From what age?", "From 18, with a valid DNI. Turning 21 is not the age of majority."],
+    ["a4", "amount", "Amount", "Is there a nationwide maximum?", "No. The amount comes from each person’s assessment. This website does not publish a national cap."],
+    ["a5", "amount", "Amount", "Is $ 200.000,00 my offer?", "No. It is an example so you can read a full cost. If there is an offer for you, it appears in the app before you accept."],
+    ["a6", "disburse", "Disbursement", "Where does the money go?", "Only to a CBU or CVU in your name."],
+    ["a7", "disburse", "Disbursement", "Does it arrive in minutes?", "We do not promise minutes or an approval. The app says whether the money was credited, is still processing, or was not credited."],
+    ["a8", "repay", "Repayment", "How do I pay?", "Account debit, transfer, or a cash network. The contract summary names the channel. A cash network can take time to show on the account."],
+    ["a9", "repay", "Repayment", "Can I pay it off early?", "After at least one quarter of the original term, or 180 days from disbursement, whichever is longer, an early-payoff fee should not apply. In the 6-installment example that date is 01/05/2027. This website does not set a fee percentage for the earlier period."],
+    ["a10", "repay", "Repayment", "Can I withdraw from the contract?", "Yes. You have 10 business days from receiving the contract or from the product becoming available, whichever is later. In the app the entry is called botón de arrepentimiento."],
+    ["a11", "account", "Account", "Can I change the debit date later?", "No. You choose the day before accepting, and it stays fixed."],
+    ["a12", "account", "Account", "What if I share the phone?", "The app can hide the balance and end the session. A debt notice does not show the amount on the lock screen."],
+    ["a13", "security", "Security", "Do you read my contacts to approve me?", "No. We do not ask for contacts, messages, photos, precise location, call logs, or the list of installed apps."],
+    ["a14", "security", "Security", "Does the WhatsApp ask for my password?", "No. The number on this website does not ask for a password, an OTP, or a payment outside the app. If someone does, stop the chat and email us."],
+    ["a15", "cost", "Cost", "What is the CFTEA?", "It is the total effective annual financial cost. In the example it includes interest and VAT, and it is shown larger than the TNA and the TEA. 408,83% is the cost of this example, not a signed product cap."],
+    ["a16", "cost", "Cost", "Does the fixed installment include VAT?", "The fixed French installment is principal plus interest: $ 48.645,14. VAT is 21% of that installment’s interest and falls as interest falls. That is why the debit is not identical every month. The last French installment closes at $ 48.645,16."],
+    ["a17", "cost", "Cost", "Does the example include stamp tax?", "No. Stamp tax and, where it applies, gross-income tax depend on the province and belong in the contract summary. The example also excludes insurance."],
+    ["a18", "complaint", "Complaints", "How do I complain?", "First to Neto, in the app, by email, or by phone. You must receive a complaint number. Keep that number and the contract number."],
+    ["a19", "complaint", "Complaints", "What if there is no answer?", "You can take the complaint to the BCRA. The link is in the footer and on this page."]
+  ]
+};
+
+const POSTS = {
+  es: [
+    ["cftea", "edu", "Educación", "Cómo leer la TNA, la TEA y el CFTEA", "La cuota no alcanza para comparar un préstamo.", [
+      "La TNA es la tasa nominal anual. La TEA es esa tasa con capitalización. El CFTEA del ejemplo suma el interés y el IVA.",
+      "En esta web la TNA de referencia es 144,00%, la TEA es 289,60% y el CFTEA con IVA es 408,83%. El número que tiene que verse más grande es el CFTEA.",
+      "Si una publicidad muestra solo la cuota, pedí el total y el CFTEA antes de aceptar."
+    ]],
+    ["falsa", "fraud", "Seguridad", "Cómo reconocer una app falsa", "El canal oficial no pide la clave ni un pago por adelantado.", [
+      "Descargá solo desde el desarrollador que figura en esta web. Un nombre parecido no alcanza.",
+      "Neto no cobra una comisión para liberar el dinero, no pide la clave por WhatsApp y no escribe a tus contactos.",
+      "Si ya enviaste un código o un pago, cortá el contacto, guardá las capturas y pedí un número de reclamo por el correo oficial."
+    ]],
+    ["aguinaldo", "life", "Vida diaria", "La cuota y el aguinaldo", "Junio y diciembre no son un ingreso de todos los meses.", [
+      "Quienes tienen empleo registrado suelen cobrar medio aguinaldo en junio y en diciembre. Ese dinero no entra todos los meses.",
+      "La cuota se mira contra el ingreso habitual, la comida, la vivienda y el transporte, no contra un mes de premio.",
+      "El ejemplo de $ 200.000,00 está cerca de 15 días del salario mínimo de octubre de 2026. Sirve para leer, no para decirte cuánto pedir."
+    ]],
+    ["arrepentimiento", "product", "Producto", "El botón de arrepentimiento", "Diez días hábiles, con ese nombre en la app.", [
+      "Cuando el producto ya está disponible, o cuando ya recibiste el contrato, corren 10 días hábiles desde el hecho más tardío.",
+      "Si no usaste el préstamo, la revocación no tiene cargo. Si ya lo usaste, solo corresponde el costo del tiempo de uso.",
+      "En el ejemplo, desde el 02/11/2026 y sin contar feriados, ese plazo llega al 13/11/2026. El contrato real usa el calendario de ese momento."
+    ]]
+  ],
+  en: [
+    ["cftea", "edu", "Education", "How to read the TNA, the TEA, and the CFTEA", "The installment is not enough to compare a loan.", [
+      "The TNA is the nominal annual rate. The TEA compounds it. The CFTEA in the example adds interest and VAT.",
+      "On this website the reference TNA is 144,00%, the TEA is 289,60%, and the CFTEA with VAT is 408,83%. The figure that should look largest is the CFTEA.",
+      "If an ad shows only the installment, ask for the total and the CFTEA before you accept."
+    ]],
+    ["falsa", "fraud", "Security", "How to spot a fake loan app", "The official channel does not ask for your password or an advance fee.", [
+      "Download only from the developer named on this website. A similar name is not enough.",
+      "Neto does not charge a fee to release the money, does not ask for your password on WhatsApp, and does not message your contacts.",
+      "If you already sent a code or a payment, stop the contact, keep screenshots, and ask for a complaint number by the official email."
+    ]],
+    ["aguinaldo", "life", "Daily life", "The installment and the mid-year bonus", "June and December are not income you receive every month.", [
+      "Registered employees are often paid half a thirteenth salary in June and in December. That money does not arrive every month.",
+      "Look at the installment against ordinary income, food, housing, and transport, not against a bonus month.",
+      "The $ 200.000,00 example is about 15 days of the October 2026 minimum wage. It is there so you can read, not so we can tell you how much to borrow."
+    ]],
+    ["arrepentimiento", "product", "Product", "The withdrawal button", "Ten business days, under that name in the app.", [
+      "Once the product is available, or once you have received the contract, 10 business days run from the later of those two events.",
+      "If you did not use the loan, withdrawal has no charge. If you did, only the cost of the time you used it applies.",
+      "In the example, from 02/11/2026 and without public holidays, that period ends on 13/11/2026. A real contract uses the calendar of that moment."
+    ]]
+  ]
+};
+
+const LEGAL = {
+  es: [
+    ["terminos", "Términos", [
+      "Neto es un préstamo personal de consumo en pesos, a tasa fija y en cuotas francesas de 3 a 12 meses. El plazo de la operación es mayor a 60 días.",
+      "El monto no está prometido de antemano. Sale de una evaluación y puede ser un no. Un no no se presenta como una prohibición permanente: la app dice cuándo se puede volver a pedir, si ese plazo existe.",
+      "Antes de aceptar ves el capital, lo que llega, la cuota, el total, la TNA, la TEA, el CFTEA con IVA, la primera fecha y la razón social que presta.",
+      "No hay seguro premarcado ni un permiso de marketing escondido en el mismo tilde del contrato."
+    ]],
+    ["privacidad", "Privacidad", [
+      "El tratamiento de datos personales se encuadra en la Ley 25.326. Esta página no resume esa ley en una frase de marketing.",
+      "Hay tres consentimientos separados: la relación contractual, la consulta y el reporte a la Central de Deudores del BCRA, y los mensajes comerciales.",
+      "El DNI y la prueba de vida sirven para identificar. No se usan para publicidad. Esta interacción no inventa un plazo de conservación: ese plazo tiene que estar en la política firmada y en el acuerdo con el proveedor de identidad.",
+      "No pedimos contactos, galería, ubicación precisa, SMS, registro de llamadas ni lista de aplicaciones. La cámara se usa en el momento de la captura.",
+      "Podés pedir acceso, rectificación o actualización al responsable. La vía de hábeas data y la Agencia de Acceso a la Información Pública quedan nombradas en la política firmada, no reemplazadas por esta página."
+    ]],
+    ["proteccion", "Protección al usuario", [
+      "Antes del contrato hay un resumen en lenguaje llano: capital, total, cuotas, vencimientos, sistema francés, costos principales, efecto de la mora, revocación y reclamo.",
+      "Aceptar es un gesto explícito. El silencio no acepta el contrato y el resumen no reemplaza el texto completo, que se puede descargar.",
+      "La revocación tiene un acceso visible llamado botón de arrepentimiento, durante 10 días hábiles.",
+      "La cancelación anticipada sigue la regla pública del BCRA: después del cuarto del plazo o de 180 días, el que sea más largo, no corresponde comisión. El resumen de cada préstamo dice si hoy esa comisión aplica."
+    ]],
+    ["regulacion", "Información regulatoria", [
+      "El prestador previsto es una sociedad inscripta como proveedor no financiero de crédito ante el BCRA, o una entidad financiera si la licencia final fuera esa. No está autorizado a tomar depósitos ni a presentarse como banco.",
+      "Los datos de Neto Consumo S.A. que ves en el pie son valores de ejemplo hasta que haya una sociedad, un CUIT y una inscripción firmados.",
+      "Las cifras de TNA, TEA y CFTEA de esta web son un ejemplo calculado. La operación real usa el resumen del contrato de ese día. Si esta página y la app no coinciden, manda el resumen de la app, y esta página se corrige.",
+      "Podés comparar condiciones en el régimen de transparencia del BCRA. Eso no significa que el BCRA recomiende a Neto."
+    ]],
+    ["cookies", "Cookies", [
+      "Esta interacción guarda el idioma en el almacenamiento local del navegador y, si cerrás la barra de descarga, ese cierre en la sesión.",
+      "No usa cookies publicitarias ni de medición de terceros.",
+      "El idioma se puede volver a elegir en cualquier página."
+    ]],
+    ["accesibilidad", "Accesibilidad", [
+      "El sitio se puede recorrer con teclado. El foco es visible. Los acordeones informan si están abiertos.",
+      "El texto de interfaz no baja de 14 px. El contraste de esta versión en blanco y negro apunta a WCAG AA.",
+      "Hay español e inglés. La dirección de la página es de izquierda a derecha.",
+      "Si una animación del sistema te molesta, el sitio respeta la preferencia de reducir movimiento.",
+      "Si no podés completar una lectura, escribinos a ayuda@neto.com.ar."
+    ]]
+  ],
+  en: [
+    ["terminos", "Terms", [
+      "Neto is a consumer personal loan in pesos, at a fixed rate, on a French schedule of 3 to 12 months. The term of the loan is longer than 60 days.",
+      "The amount is not promised in advance. It comes from an assessment, and the answer can be no. A no is not shown as a permanent ban: the app says when you can apply again, if such a period exists.",
+      "Before you accept you see the principal, what arrives, the installment, the total, the TNA, the TEA, the CFTEA with VAT, the first date, and the legal entity that lends.",
+      "Insurance is not pre-checked, and marketing permission is not hidden in the same tick as the contract."
+    ]],
+    ["privacidad", "Privacy", [
+      "Personal data is handled under Law 25,326. This page does not compress that law into a marketing line.",
+      "There are three separate consents: the contract relationship, consultation and reporting to the BCRA debtor center, and commercial messages.",
+      "The DNI and the liveness check are used to identify you. They are not used for advertising. This interaction does not invent a retention period: that period has to be in the signed policy and in the agreement with the identity provider.",
+      "We do not ask for contacts, your photo gallery, precise location, SMS, call logs, or the list of apps. The camera is used at the moment of capture.",
+      "You can ask the controller for access, correction, or an update. Habeas data and the Access to Public Information Agency are named in the signed policy, not replaced by this page."
+    ]],
+    ["proteccion", "Customer protection", [
+      "Before the contract there is a plain-language summary: principal, total, installments, due dates, French schedule, main costs, the effect of late payment, withdrawal, and how to complain.",
+      "Acceptance is an explicit act. Silence does not accept the contract, and the summary does not replace the full text, which can be downloaded.",
+      "Withdrawal has a visible entry called botón de arrepentimiento, for 10 business days.",
+      "Early payoff follows the BCRA’s public rule: after one quarter of the term or 180 days, whichever is longer, a fee should not apply. Each loan summary says whether that fee applies today."
+    ]],
+    ["regulacion", "Regulatory information", [
+      "The intended lender is a company registered with the BCRA as a non-financial credit provider, or a financial institution if the final license is that one. It is not allowed to take deposits or to present itself as a bank.",
+      "The Neto Consumo S.A. details in the footer are example values until a company, a CUIT, and a registration are signed.",
+      "The TNA, TEA, and CFTEA on this website are a calculated example. A real loan uses that day’s contract summary. If this page and the app disagree, the app summary prevails and this page is corrected.",
+      "You can compare conditions in the BCRA transparency regime. That does not mean the BCRA recommends Neto."
+    ]],
+    ["cookies", "Cookies", [
+      "This interaction stores the language in the browser’s local storage and, if you close the download bar, that dismissal for the session.",
+      "It does not use advertising cookies or third-party measurement cookies.",
+      "You can choose the language again on any page."
+    ]],
+    ["accesibilidad", "Accessibility", [
+      "The site can be used with a keyboard. Focus is visible. Accordions report whether they are open.",
+      "Interface text does not go below 14 px. The contrast of this black-and-white version aims at WCAG AA.",
+      "Spanish and English are available. The page direction is left to right.",
+      "If a system animation bothers you, the site respects the reduced-motion preference.",
+      "If you cannot finish reading something, email ayuda@neto.com.ar."
+    ]]
+  ]
+};
+
+const SCEN = {
+  es: [
+    ["Una app con nombre parecido pide una comisión antes de acreditar.", "El desembolso no se “libera” con un pago previo."],
+    ["Un WhatsApp o un Instagram pide la clave, el OTP o fotos del DNI para desbloquear.", "El soporte oficial no pide eso."],
+    ["Alguien que dice cobrar escribe a tus contactos.", "La deuda no se conversa con tu agenda."],
+    ["Una página imita al BCRA o usa la escarapela para parecer estatal.", "La verificación es la razón social y el CUIT, no un emblema."],
+    ["Ofrecen devolver todo en 30 o 45 días, o muestran solo una cuota chica.", "Pedí el plazo completo y el CFTEA."]
+  ],
+  en: [
+    ["An app with a similar name asks for a fee before disbursing.", "Disbursement is not “released” by an advance payment."],
+    ["A WhatsApp or Instagram account asks for the password, the OTP, or DNI photos in order to unlock the loan.", "Official support does not ask for that."],
+    ["Someone claiming to collect messages your contacts.", "The debt is not discussed with your address book."],
+    ["A page imitates the BCRA or uses a national emblem to look governmental.", "You verify the legal name and the CUIT, not an emblem."],
+    ["They offer full repayment in 30 or 45 days, or show only a small installment.", "Ask for the full term and the CFTEA."]
+  ]
+};
+const NEVER = {
+  es: [
+    "Pedir la clave, el OTP o un código de la app.",
+    "Pedir contactos, mensajes, galería o ubicación precisa.",
+    "Cobrar por adelantado para liberar el préstamo.",
+    "Exigir el pago total antes de 60 días.",
+    "Contactar a tu agenda por una deuda."
+  ],
+  en: [
+    "Ask for the password, the OTP, or an in-app code.",
+    "Ask for contacts, messages, photos, or precise location.",
+    "Charge an advance fee to release the loan.",
+    "Demand full repayment before 60 days.",
+    "Contact your address book about a debt."
+  ]
+};
+const NOW = {
+  es: [
+    "No envíes más dinero ni códigos.",
+    "Guardá capturas, el número y el nombre de la cuenta.",
+    "Escribí a ayuda@neto.com.ar y pedí un número de reclamo.",
+    "Si compartiste la clave, entrá solo por la app oficial y cambiala.",
+    "Si hubo un pago o entregaste datos, hacé la denuncia ante la autoridad local."
+  ],
+  en: [
+    "Do not send more money or codes.",
+    "Keep screenshots, the number, and the account name.",
+    "Email ayuda@neto.com.ar and ask for a complaint number.",
+    "If you shared the password, open only the official app and change it.",
+    "If you paid or handed over data, report it to the local authority."
+  ]
+};
+const FILTERS = [
+  ["all", "faqAll"],
+  ["apply", "apply"],
+  ["amount", "amount"],
+  ["disburse", "disburse"],
+  ["repay", "repay"],
+  ["account", "account"],
+  ["security", "security"],
+  ["cost", "cost"],
+  ["complaint", "complaint"]
+];
+const PFILTERS = [["all", "faqAll"], ["edu", "edu"], ["fraud", "fraud"], ["life", "life"], ["product", "product"]];
+
+function t(key) {
+  const v = UI[state.lang][key];
+  return v == null ? key : v;
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function eye(text) {
+  return `<p class="eyebrow"><i></i>${esc(text)}</p>`;
+}
+function peso(n) {
+  return `$ ${n}`;
+}
+function currentNav(page) {
+  return state.page === page ? ` aria-current="page"` : "";
+}
+function actions() {
+  return `<div class="actions"><a class="btn" href="#/inicio" data-anchor="descargar">${esc(t("download"))}</a><a class="btn ghost" href="#/costos">${esc(t("look"))}</a></div>`;
+}
+function kvRow(label, value, emph) {
+  return `<div class="${emph ? "emph" : ""}"><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`;
+}
+function numList(items) {
+  return `<ol class="ol">${items.map((item, i) => {
+    const title = Array.isArray(item) ? item[0] : item;
+    const body = Array.isArray(item) ? item[1] : "";
+    return `<li><span class="n">${String(i + 1).padStart(2, "0")}</span><div><strong>${esc(title)}</strong>${body ? `<p class="lead">${esc(body)}</p>` : ""}</div></li>`;
+  }).join("")}</ol>`;
+}
+function storeBtns(light) {
+  const cls = light ? "btn light" : "btn";
+  return `<div class="actions"><a class="${cls}" href="https://play.google.com/store/apps/details?id=com.neto.prestamos" rel="noopener noreferrer">Google Play</a><a class="${light ? "btn light" : "btn ghost"}" href="https://apps.apple.com/ar/app/neto/id000000000" rel="noopener noreferrer">App Store</a></div>`;
+}
+
+function renderHeader() {
+  const links = [
+    ["inicio", "navHome"],
+    ["costos", "navCost"],
+    ["seguridad", "navSafe"],
+    ["ayuda", "navHelp"],
+    ["guias", "navGuides"]
+  ];
+  document.getElementById("header").innerHTML = `<div class="wrap bar">
+    <a class="brand" href="#/inicio"><span class="mark" aria-hidden="true">N</span><span class="word">Neto</span></a>
+    <nav id="site-nav" class="nav${state.menu ? " open" : ""}" aria-label="Neto">
+      ${links.map(([id, key]) => `<a id="nav-${id}" href="#/${id}"${currentNav(id)}>${esc(t(key))}</a>`).join("")}
+    </nav>
+    <div class="tools">
+      <div class="lang" role="group" aria-label="${esc(t("lang"))}">
+        <button type="button" id="lang-es" aria-pressed="${state.lang === "es"}">ES</button>
+        <button type="button" id="lang-en" aria-pressed="${state.lang === "en"}">EN</button>
+      </div>
+      <a class="btn hdr-dl" href="#/inicio" data-anchor="descargar">${esc(t("download"))}</a>
+      <button type="button" class="menu-btn" id="menuBtn" aria-expanded="${state.menu}" aria-controls="site-nav">${esc(state.menu ? t("close") : t("menu"))}</button>
+    </div>
+  </div>`;
+}
+
+function renderBar() {
+  const el = document.getElementById("bar");
+  document.body.classList.toggle("has-bar", state.bar);
+  if (!state.bar) { el.innerHTML = ""; return; }
+  el.innerHTML = `<div class="dlbar"><p>${esc(t("bar"))}</p><a class="btn" href="#/inicio" data-anchor="descargar">${esc(t("download"))}</a><button type="button" class="x" id="closeBar" aria-label="${esc(t("close"))}">×</button></div>`;
+}
+
+function renderFooter() {
+  const legal = LEGAL[state.lang].map(([slug, title]) => `<li><a href="#/legal/${slug}"${state.page === "legal" && state.slug === slug ? ` aria-current="page"` : ""}>${esc(title)}</a></li>`).join("");
+  document.getElementById("footer").innerHTML = `<div class="wrap foot-grid">
+    <div>
+      <a class="brand" href="#/inicio"><span class="mark" aria-hidden="true">N</span><span class="word">Neto</span></a>
+      <p class="lead">${esc(t("footAbout"))}</p>
+      ${storeBtns(true)}
+    </div>
+    <div>
+      <h2>${esc(t("footContact"))}</h2>
+      <div class="stack">
+        <a href="tel:+541152348901">11 5234 8901</a><br>
+        <a href="mailto:ayuda@neto.com.ar">ayuda@neto.com.ar</a><br>
+        <a href="https://wa.me/5491152348901" rel="noopener noreferrer">WhatsApp</a>
+        <p class="muted">${esc(t("addr"))}</p>
+      </div>
+    </div>
+    <div>
+      <h2>${esc(t("footLegal"))}</h2>
+      <ul>${legal}</ul>
+    </div>
+    <div>
+      <h2>${esc(t("footReg"))}</h2>
+      <div class="stack">
+        <a href="https://www.bcra.gob.ar/regimen-de-transparencia/" rel="noopener noreferrer">BCRA · Transparencia</a><br>
+        <a href="https://www.bcra.gob.ar/prestamos-personales-comparar-costos-y-condiciones/" rel="noopener noreferrer">BCRA · Préstamos personales</a><br>
+        <a href="https://www.bcra.gob.ar/reclamo-productos-servicios-financieros/" rel="noopener noreferrer">BCRA · Reclamos</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap fine">
+    <p>${esc(t("copy"))}</p>
+    <p style="margin-top:8px">${esc(t("fraudLine"))}</p>
+    <p style="margin-top:8px">${esc(t("src"))}</p>
+  </div>`;
+}
+
+function homeFacts() {
+  const rows = [["f1k", "f1v", "f1s"], ["f2k", "f2v", "f2s"], ["f3k", "f3v", "f3s"], ["f4k", "f4v", "f4s"]];
+  return rows.map(([k, v, s]) => `<article><p>${esc(t(k))}</p><strong>${esc(t(v))}</strong><em>${esc(t(s))}</em></article>`).join("");
+}
+function summaryKv() {
+  return `<dl class="kv">
+    ${kvRow(state.lang === "es" ? "Capital" : "Principal", `$ 200.000,00 ${t("pesos")}`)}
+    ${kvRow(state.lang === "es" ? "Plazo" : "Term", state.lang === "es" ? "6 cuotas mensuales" : "6 monthly installments")}
+    ${kvRow(t("mCuota"), peso("48.645,14"))}
+    ${kvRow(state.lang === "es" ? "IVA del ejemplo" : "VAT in the example", peso("19.292,88"))}
+    ${kvRow(t("mTotal"), peso("311.163,74"), true)}
+    ${kvRow("TNA", "144,00%")}
+    ${kvRow("TEA", "289,60%")}
+    ${kvRow(t("mCft"), "408,83%", true)}
+    ${kvRow(t("mDate"), "02/12/2026")}
+  </dl>`;
+}
+
+function renderHome() {
+  const posts = POSTS[state.lang].slice(0, 3);
+  return `<article>
+    <section class="hero"><div class="wrap hero-grid">
+      <div>
+        ${eye(t("heroEye"))}
+        <h1>${esc(t("h1"))}</h1>
+        <p class="lead">${esc(t("heroLead"))}</p>
+        ${actions()}
+      </div>
+      <div class="panel">
+        ${eye(t("exEye"))}
+        <div class="meter-row"><span>${esc(t("mArrive"))}</span><strong>${peso("200.000,00")} ${esc(t("pesos"))}</strong></div>
+        <div class="meter-row"><span>${esc(t("mCuota"))}</span><strong>${peso("48.645,14")}</strong></div>
+        <div class="meter-row"><span>${esc(t("mTotal"))}</span><strong>${peso("311.163,74")}</strong></div>
+        <div class="meter-row"><span>${esc(t("mDate"))}</span><strong>02/12/2026</strong></div>
+        <div class="meter-row is-cost"><span>${esc(t("mCft"))}</span><strong>408,83%</strong></div>
+      </div>
+    </div></section>
+    <section class="wrap" aria-label="${esc(t("factEye"))}">${eye(t("factEye"))}<div class="facts">${homeFacts()}</div></section>
+    <section class="block band" id="costos-resumen"><div class="wrap split">
+      <div class="sticky">${eye(t("costEye"))}<h2>${esc(t("costH"))}</h2><p class="lead">${esc(t("costLead"))}</p><p class="lead"><a class="link" href="#/costos">${esc(t("fullTable"))}</a></p></div>
+      <div>${summaryKv()}</div>
+    </div></section>
+    <section class="block"><div class="wrap split">
+      <div class="sticky">${eye(t("trustEye"))}<h2>${esc(t("trustH"))}</h2><p class="lead">${esc(t("trustLead"))}</p></div>
+      <div>${numList([[t("t1"), ""], [t("t2"), ""], [t("t3"), ""], [t("t4"), ""]])}
+        <p class="lead"><a href="https://www.bcra.gob.ar/regimen-de-transparencia/" rel="noopener noreferrer">BCRA · Transparencia</a><br><a href="https://www.bcra.gob.ar/prestamos-personales-comparar-costos-y-condiciones/" rel="noopener noreferrer">BCRA · Préstamos personales</a></p>
+      </div>
+    </div></section>
+    <section class="block" style="padding-top:0"><div class="wrap">
+      ${eye(t("benEye"))}
+      <h2>${esc(t("benH"))}</h2>
+      <div class="cols-3">
+        <article><h3>${esc(t("b1t"))}</h3><p>${esc(t("b1d"))}</p></article>
+        <article><h3>${esc(t("b2t"))}</h3><p>${esc(t("b2d"))}</p></article>
+        <article><h3>${esc(t("b3t"))}</h3><p>${esc(t("b3d"))}</p></article>
+      </div>
+      <p class="rule-top"><strong>${esc(t("b4"))}</strong></p>
+    </div></section>
+    <section class="block band" id="como"><div class="wrap">
+      ${eye(t("stepEye"))}<h2>${esc(t("stepH"))}</h2>
+      <div class="steps" style="margin-top:32px">
+        <article><h3>${esc(t("s1t"))}</h3><p>${esc(t("s1d"))}</p></article>
+        <article><h3>${esc(t("s2t"))}</h3><p>${esc(t("s2d"))}</p></article>
+        <article><h3>${esc(t("s3t"))}</h3><p>${esc(t("s3d"))}</p></article>
+        <article><h3>${esc(t("s4t"))}</h3><p>${esc(t("s4d"))}</p></article>
+      </div>
+    </div></section>
+    <section class="block band-dark"><div class="wrap split">
+      <div class="sticky">${eye(t("frEye"))}<h2>${esc(t("frH"))}</h2><p class="lead">${esc(t("frLead"))}</p><p class="lead"><a class="link" href="#/seguridad">${esc(t("moreSafe"))}</a></p></div>
+      <div>${numList([[t("w1t"), t("w1d")], [t("w2t"), t("w2d")], [t("w3t"), t("w3d")]])}</div>
+    </div></section>
+    <section class="block"><div class="wrap split">
+      <div class="sticky">${eye(t("helpEye"))}<h2>${esc(t("helpH"))}</h2><p class="lead"><a class="link" href="#/ayuda">${esc(t("allHelp"))}</a></p></div>
+      <div>${numList([[t("q1"), t("a1")], [t("q2"), t("a2")], [t("q3"), t("a3")]])}</div>
+    </div></section>
+    <section class="block" style="padding-top:0"><div class="wrap">
+      ${eye(t("postEye"))}<h2>${esc(t("postH"))}</h2><p class="lead">${esc(t("postLead"))}</p>
+      <div style="margin-top:20px">
+        ${posts.map((p) => `<a class="post-row" href="#/guias/${p[0]}"><span class="tag">${esc(p[2])} · 29/10/2026 · ${esc(t("draft"))}</span><span><h3>${esc(p[3])}</h3><p class="lead">${esc(p[4])}</p></span><span class="link">${esc(t("read"))}</span></a>`).join("")}
+      </div>
+      <p class="lead"><a class="link" href="#/guias">${esc(t("allPosts"))}</a></p>
+    </div></section>
+    <section class="block band" id="descargar"><div class="wrap split">
+      <div>${eye(t("dlEye"))}<h2>${esc(t("dlH"))}</h2><p class="lead">${esc(t("dlLead"))}</p></div>
+      <div>${storeBtns(false)}</div>
+    </div></section>
+  </article>`;
+}
+
+function renderCost() {
+  const heads = [t("thN"), t("thDate"), t("thPrin"), t("thInt"), t("thIva"), t("thFr"), t("thDeb")];
+  const rows = SCHEDULE.map((r) => `<tr>${r.map((cell, i) => `<td class="${i > 1 ? "num" : ""}" data-label="${esc(heads[i])}">${esc(i > 1 ? peso(cell) : cell)}</td>`).join("")}</tr>`).join("");
+  return `<article class="block"><div class="wrap split">
+    <div class="sticky">${eye(t("costEye"))}<h1>${esc(t("costPageH"))}</h1><p class="lead">${esc(t("costPageL"))}</p></div>
+    <div>
+      ${summaryKv()}
+      <h2 style="margin-top:48px">${esc(t("schCap"))}</h2>
+      <table class="sched" style="margin-top:12px">
+        <caption class="vh">${esc(t("schCap"))}</caption>
+        <thead><tr>${heads.map((h, i) => `<th class="${i > 1 ? "num" : ""}" scope="col">${esc(h)}</th>`).join("")}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <h2 style="margin-top:48px">${esc(t("calcH"))}</h2>
+      ${numList([t("c1"), t("c2"), t("c3"), t("c4"), t("c5"), t("c6")])}
+      <p class="lead" id="fuente">${esc(t("src"))}</p>
+      <h2 style="margin-top:48px">${esc(t("dateH"))}</h2>
+      ${numList([t("d1"), t("d2"), t("d3")])}
+    </div>
+  </div></article>`;
+}
+
+function renderSafe() {
+  return `<article class="block"><div class="wrap split">
+    <div class="sticky">${eye(t("frEye"))}<h1>${esc(t("safeH"))}</h1><p class="lead">${esc(t("safeL"))}</p></div>
+    <div class="prose">
+      <h2>${esc(t("scH"))}</h2>
+      ${numList(SCEN[state.lang])}
+      <h2 style="margin-top:36px">${esc(t("nvH"))}</h2>
+      ${numList(NEVER[state.lang])}
+      <h2 style="margin-top:36px">${esc(t("chH"))}</h2>
+      ${numList(state.lang === "es" ? [
+        ["Esta web, neto.com.ar.", "Es el sitio que estás leyendo."],
+        ["Tiendas, desarrollador Neto Consumo S.A.", "No alcanza con que el ícono se parezca."],
+        ["Teléfono 11 5234 8901.", ""],
+        ["ayuda@neto.com.ar y el WhatsApp publicado acá.", "Ese chat no pide clave ni OTP."]
+      ] : [
+        ["This website, neto.com.ar.", "The site you are reading."],
+        ["The stores, developer Neto Consumo S.A.", "A similar icon is not enough."],
+        ["Phone 11 5234 8901.", ""],
+        ["ayuda@neto.com.ar and the WhatsApp published here.", "That chat does not ask for a password or an OTP."]
+      ])}
+      <p class="lead"><a href="tel:+541152348901">11 5234 8901</a> · <a href="mailto:ayuda@neto.com.ar">ayuda@neto.com.ar</a> · <a href="https://wa.me/5491152348901" rel="noopener noreferrer">WhatsApp</a></p>
+      <h2 style="margin-top:36px">${esc(t("nowH"))}</h2>
+      ${numList(NOW[state.lang])}
+      <h2 style="margin-top:36px">${esc(t("upH"))}</h2>
+      <p>${esc(state.lang === "es"
+        ? "El reclamo empieza en Neto y tiene número. Si la respuesta no alcanza o no llega, seguís en el canal del BCRA. El enlace está en el pie."
+        : "The complaint starts at Neto and has a number. If the answer is not enough, or does not arrive, you continue through the BCRA channel. The link is in the footer.")}</p>
+      <p>${esc(t("fraudLine"))}</p>
+    </div>
+  </div></article>`;
+}
+
+function faqLabel(cat) {
+  const row = FAQ[state.lang].find((item) => item[1] === cat);
+  if (cat === "all") return t("faqAll");
+  return row ? row[2] : cat;
+}
+function renderHelp() {
+  const cats = [];
+  FAQ[state.lang].forEach((item) => { if (!cats.includes(item[1])) cats.push(item[1]); });
+  const shown = state.faq === "all" ? cats : cats.filter((c) => c === state.faq);
+  const filters = FILTERS.map(([id]) => `<button type="button" class="chip" data-faq="${id}" aria-pressed="${state.faq === id}" id="ff-${id}">${esc(faqLabel(id))}</button>`).join("");
+  const groups = shown.map((cat) => {
+    const items = FAQ[state.lang].filter((item) => item[1] === cat);
+    return `<section><h2 style="margin-top:28px">${esc(items[0][2])}</h2>${items.map((item) => {
+      const open = state.open === item[0];
+      return `<h3><button type="button" class="acc-btn" id="faq-${item[0]}" aria-expanded="${open}" aria-controls="panel-${item[0]}">${esc(item[3])}<span aria-hidden="true">${open ? "–" : "+"}</span></button></h3><div class="acc-panel${open ? " open" : ""}" id="panel-${item[0]}" role="region">${esc(item[4])}</div>`;
+    }).join("")}</section>`;
+  }).join("");
+  return `<article class="block"><div class="wrap">
+    ${eye(t("helpEye"))}<h1>${esc(t("helpH"))}</h1><p class="lead">${esc(t("helpL"))}</p>
+    <div class="filters" role="group" aria-label="${esc(t("helpEye"))}">${filters}</div>
+    ${groups}
+    <h2 style="margin-top:40px">${esc(t("contactH"))}</h2>
+    <p class="lead">${esc(t("contactL"))}</p>
+    <p class="lead"><a href="tel:+541152348901">11 5234 8901</a> · <a href="mailto:ayuda@neto.com.ar">ayuda@neto.com.ar</a> · <a href="https://wa.me/5491152348901" rel="noopener noreferrer">WhatsApp</a></p>
+    <p class="lead"><a href="https://www.bcra.gob.ar/reclamo-productos-servicios-financieros/" rel="noopener noreferrer">BCRA · Reclamos</a></p>
+  </div></article>`;
+}
+
+function renderGuides() {
+  const post = POSTS[state.lang].find((item) => item[0] === state.slug);
+  if (post) {
+    return `<article class="block"><div class="wrap prose">
+      <p class="tag">${esc(post[2])} · 29/10/2026 · ${esc(t("draft"))}</p>
+      <h1 style="margin-top:12px">${esc(post[3])}</h1>
+      <p class="lead">${esc(post[4])}</p>
+      ${post[5].map((para) => `<p>${esc(para)}</p>`).join("")}
+      <p style="margin-top:28px"><a class="link" href="#/guias">${esc(t("back"))}</a></p>
+      <div style="margin-top:28px">${storeBtns(false)}</div>
+    </div></article>`;
+  }
+  const labels = { edu: POSTS[state.lang].find((p) => p[1] === "edu")[2], fraud: POSTS[state.lang].find((p) => p[1] === "fraud")[2], life: POSTS[state.lang].find((p) => p[1] === "life")[2], product: POSTS[state.lang].find((p) => p[1] === "product")[2] };
+  const filters = PFILTERS.map(([id]) => `<button type="button" class="chip" data-post="${id}" aria-pressed="${state.post === id}" id="pf-${id}">${esc(id === "all" ? t("faqAll") : labels[id])}</button>`).join("");
+  const list = POSTS[state.lang].filter((p) => state.post === "all" || p[1] === state.post);
+  return `<article class="block"><div class="wrap">
+    ${eye(t("postEye"))}<h1>${esc(t("guideH"))}</h1><p class="lead">${esc(t("guideL"))}</p>
+    <div class="filters" role="group" aria-label="${esc(t("postEye"))}">${filters}</div>
+    <div style="margin-top:12px">${list.map((p) => `<a class="post-row" href="#/guias/${p[0]}"><span class="tag">${esc(p[2])} · 29/10/2026 · ${esc(t("draft"))}</span><span><h3>${esc(p[3])}</h3><p class="lead">${esc(p[4])}</p></span><span class="link">${esc(t("read"))}</span></a>`).join("")}</div>
+  </div></article>`;
+}
+
+function renderLegal() {
+  const docs = LEGAL[state.lang];
+  const current = docs.find((d) => d[0] === state.slug) || docs[0];
+  return `<article class="block"><div class="wrap legal-grid">
+    <nav class="side" aria-label="${esc(t("legalEye"))}">
+      ${eye(t("legalEye"))}
+      ${docs.map(([slug, title]) => `<a href="#/legal/${slug}"${current[0] === slug ? ` aria-current="page"` : ""}>${esc(title)}</a>`).join("")}
+    </nav>
+    <div class="prose">
+      <h1>${esc(current[1])}</h1>
+      <p class="lead">${esc(t("work"))}</p>
+      ${current[2].map((para) => `<p>${esc(para)}</p>`).join("")}
+    </div>
+  </div></article>`;
+}
+
+function renderMain() {
+  const map = { inicio: renderHome, costos: renderCost, seguridad: renderSafe, ayuda: renderHelp, guias: renderGuides, legal: renderLegal };
+  document.getElementById("main").innerHTML = map[state.page]();
+  const titles = { inicio: "titleHome", costos: "titleCost", seguridad: "titleSafe", ayuda: "titleHelp", guias: "titleGuides", legal: "titleLegal" };
+  document.title = t(titles[state.page]);
+  document.documentElement.lang = state.lang === "en" ? "en" : "es";
+  document.getElementById("skip").textContent = t("skip");
+}
+
+function readHash() {
+  const parts = (location.hash || "#/inicio").replace(/^#\/?/, "").split("/").filter(Boolean);
+  const page = PAGES.includes(parts[0]) ? parts[0] : "inicio";
+  let slug = parts[1] || "";
+  if (page === "legal" && !LEGAL.es.some((d) => d[0] === slug)) slug = "terminos";
+  if (page === "guias" && slug && !POSTS.es.some((d) => d[0] === slug)) slug = "";
+  if (page !== "legal" && page !== "guias") slug = "";
+  state.page = page;
+  state.slug = slug;
+}
+
+function render(opts = {}) {
+  const focusId = opts.focusId || "";
+  renderHeader();
+  renderBar();
+  renderMain();
+  renderFooter();
+  document.body.classList.toggle("menu-open", state.menu);
+  if (opts.anchor) {
+    const node = document.getElementById(opts.anchor);
+    if (node) node.scrollIntoView();
+  } else if (opts.scroll !== false) {
+    window.scrollTo(0, 0);
+  }
+  if (focusId) {
+    const node = document.getElementById(focusId);
+    if (node) node.focus();
+  }
+}
+
+document.addEventListener("click", (e) => {
+  const lang = e.target.closest("#lang-es, #lang-en");
+  if (lang) {
+    state.lang = lang.id === "lang-en" ? "en" : "es";
+    localStorage.setItem("neto-lang", state.lang);
+    render({ scroll: false, focusId: lang.id });
+    return;
+  }
+  if (e.target.closest("#menuBtn")) {
+    state.menu = !state.menu;
+    render({ scroll: false, focusId: state.menu ? "nav-inicio" : "menuBtn" });
+    return;
+  }
+  if (e.target.closest("#closeBar")) {
+    state.bar = false;
+    sessionStorage.setItem("neto-bar", "off");
+    render({ scroll: false });
+    return;
+  }
+  const faq = e.target.closest("[data-faq]");
+  if (faq) {
+    state.faq = faq.getAttribute("data-faq");
+    state.open = "";
+    render({ scroll: false, focusId: faq.id });
+    return;
+  }
+  const post = e.target.closest("[data-post]");
+  if (post) {
+    state.post = post.getAttribute("data-post");
+    render({ scroll: false, focusId: post.id });
+    return;
+  }
+  const acc = e.target.closest(".acc-btn");
+  if (acc) {
+    const id = acc.id.replace("faq-", "");
+    state.open = state.open === id ? "" : id;
+    render({ scroll: false, focusId: acc.id });
+    return;
+  }
+  const a = e.target.closest("a[href^='#/']");
+  if (!a) return;
+  state.anchor = a.dataset.anchor || "";
+  state.menu = false;
+  if (a.getAttribute("href") === location.hash) {
+    e.preventDefault();
+    readHash();
+    render({ scroll: !state.anchor, anchor: state.anchor });
+    state.anchor = "";
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && state.menu) {
+    state.menu = false;
+    render({ scroll: false, focusId: "menuBtn" });
+  }
+});
+
+window.addEventListener("hashchange", () => {
+  readHash();
+  const anchor = state.anchor;
+  state.anchor = "";
+  render({ scroll: !anchor, anchor });
+});
+
+readHash();
+render({ scroll: true });
+</script>
+</body>
+</html>
